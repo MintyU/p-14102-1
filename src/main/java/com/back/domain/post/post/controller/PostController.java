@@ -15,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -63,12 +64,12 @@ public class PostController {
     @AllArgsConstructor
     @Getter
     public static class WriteForm {
-        @NotBlank(message = "제목을 입력해주세요.")
-        @Size(min = 2, max = 20, message = "제목은 2자 이상, 20자 이하로 입력 가능합니다.")
+        @NotBlank(message = "1-제목을 입력해주세요.")
+        @Size(min = 2, max = 20, message = "2-제목은 2자 이상, 20자 이하로 입력 가능합니다.")
         private String title;
 
-        @NotBlank(message = "내용을 입력해주세요.")
-        @Size(min = 2, max = 100, message = "내용은 2자 이상, 100자 이하로 입력 가능합니다.")
+        @NotBlank(message = "3-내용을 입력해주세요.")
+        @Size(min = 2, max = 100, message = "4-내용은 2자 이상, 100자 이하로 입력 가능합니다.")
         private String content;
     }
 
@@ -80,10 +81,14 @@ public class PostController {
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            FieldError fieldError = bindingResult.getFieldError();
-
-            String errorFieldName = fieldError.getField();
-            String errorMessage = fieldError.getDefaultMessage();
+            String errorFieldName = "title";
+            String errorMessage = bindingResult
+                    .getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .sorted()
+                    .map(message -> message.split("-", 2)[1])
+                    .collect(Collectors.joining("<br>"));
 
             return getWriteForHtml(errorFieldName, errorMessage, form.getTitle(), form.getContent());
         }
