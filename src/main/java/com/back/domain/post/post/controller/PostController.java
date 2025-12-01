@@ -23,12 +23,14 @@ public class PostController {
     private final PostService postService;
 
     private String getWriteForHtml() {
-        return getWriteForHtml("", "", "", "");
+        return getWriteForHtml("", "", "");
     }
 
-    private String getWriteForHtml(String errorFieldName, String errorMessage, String title, String content) {
+    private String getWriteForHtml(String errorMessage, String title, String content) {
         return """
-                <div style="color:red;">%s</div>
+                <ul style="color:red">
+                    %s
+                </ul>
                 
                 <form action="doWrite" method="POST">
                     <input type="text" name="title" placeholder="제목" value="%s" autofocus>
@@ -39,19 +41,18 @@ public class PostController {
                 </form>
                 
                 <script>
-                const errorFieldName = '%s';
+                // 현재까지 나온 모든 폼 검색
+                const forms = document.querySelectorAll('form');
+                // 그 중에서 가장 마지막 폼 1개 찾기
+                const lastForm = forms[forms.length - 1];
                 
+                const errorFieldName = lastForm.previousElementSibling?.querySelector('li')?.dataset?.errorFieldName || "";
                 if ( errorFieldName.length > 0 )
                 {
-                    // 현재까지 나온 모든 폼 검색
-                    const forms = document.querySelectorAll('form');
-                    // 그 중에서 가장 마지막 폼 1개 찾기
-                    const lastForm = forms[forms.length - 1];
-                
                     lastForm[errorFieldName].focus();
                 }
                 </script>
-                """.formatted(errorMessage, title, content, errorFieldName);
+                """.formatted(errorMessage, title, content);
     }
 
     @GetMapping("/posts/write")
@@ -85,12 +86,12 @@ public class PostController {
             String errorMessage = bindingResult
                     .getFieldErrors()
                     .stream()
-                    .map(FieldError::getDefaultMessage)
+                    .map(fieldError -> (fieldError.getField() + "-" + fieldError.getDefaultMessage()).split("-", 3))
+                    .map(field -> "<!--%s--><li data-error-field-name=\"%s\">%s</li>".formatted(field[1], field[0], field[2]))
                     .sorted()
-                    .map(message -> message.split("-", 2)[1])
-                    .collect(Collectors.joining("<br>"));
+                    .collect(Collectors.joining("\n"));
 
-            return getWriteForHtml(errorFieldName, errorMessage, form.getTitle(), form.getContent());
+            return getWriteForHtml(errorMessage, form.getTitle(), form.getContent());
         }
 
         Post post = postService.write(form.getTitle(), form.getContent());
