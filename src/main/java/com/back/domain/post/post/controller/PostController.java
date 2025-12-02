@@ -53,8 +53,7 @@ public class PostController {
         }
 
         Post post = postService.write(form.getTitle(), form.getContent());
-        model.addAttribute("post", post);
 
-        return "post/post/writeDone";
+        return "redirect:/posts/write";
     }
 }
