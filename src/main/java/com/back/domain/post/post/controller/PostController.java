@@ -41,7 +41,7 @@ public class PostController {
         return "post/post/write";
     }
 
-    @PostMapping("/posts/doWrite")
+    @PostMapping("/posts/write")
     @Transactional
     public String write(
             @ModelAttribute("form") @Valid WriteForm form,
