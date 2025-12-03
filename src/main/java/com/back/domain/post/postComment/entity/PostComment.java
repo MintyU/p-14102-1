@@ -1,11 +1,11 @@
-package com.back.domain.post.post.entity;
+package com.back.domain.post.postComment.entity;
 
+import com.back.domain.post.post.entity.Post;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter

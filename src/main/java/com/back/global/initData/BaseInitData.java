@@ -1,7 +1,6 @@
 package com.back.global.initData;
 
 import com.back.domain.post.post.entity.Post;
-import com.back.domain.post.post.entity.PostComment;
 import com.back.domain.post.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
