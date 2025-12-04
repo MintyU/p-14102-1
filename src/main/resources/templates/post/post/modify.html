@@ -1,4 +1,9 @@
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{layout}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="|글 수정 - ${post.title}|"></title>
+</head>
+
 <div layout:fragment="content">
 
     <form method="POST" th:object="${form}">
